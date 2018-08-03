@@ -139,6 +139,26 @@ export default class BubbleChart extends Component {
                 return "#" + d.id;
             });
 
+        node.append("title").text(function(d) {
+            return d.label + ": " + d.value;
+            // return d.value;
+        });
+
+        // d3.selectAll(".value-text")
+        // .style("opacity", function(d) {
+        //     const self = d3.select(this);
+        //     const width = self.node().getBBox().width;
+        //     d.hideLabel = width * 1.05 > d.r * 2;
+        //     // return d.hideLabel ? 0 : 1;
+        //     console.log(width, d.r, d.label)
+        //     console.log(d)
+        //     if(d.hideLabel){
+
+        //         d.label = d.data.label.substring(0,2)
+        //     }
+        //     console.log(d)
+        // })
+
         node.append("text")
             .attr("class", "value-text")
             .style("font-size", `${valueFont.size}px`)
@@ -159,67 +179,100 @@ export default class BubbleChart extends Component {
                 return valueFont.lineWeight ? valueFont.lineWeight : 0;
             })
             .text(function(d) {
-                return d.value;
+                // return d.value;
+                // const width = this.node().getBBox().width;
+                d.hideLabel = width * 1.05 > d.r * 2;
+                // return d.hideLabel ? 0 : 1;
+                // console.log(width, d.r, d.label)
+                // console.log(d)
+                // if(d.hideLabel){
+                //     return d.data.label.substring(0,2)
+                // }
+                return d.label;
+                // return d.data.label.substring(0,2)
             });
-
-        node.append("text")
-            .attr("class", "label-text")
-            .style("font-size", `${labelFont.size}px`)
-            .attr("clip-path", function(d) {
-                return "url(#clip-" + d.id + ")";
-            })
-            .style("font-weight", d => {
-                return labelFont.weight ? labelFont.weight : 600;
-            })
-            .style("font-family", labelFont.family)
-            .style("fill", () => {
-                return labelFont.color ? labelFont.color : "#000";
-            })
-            .style("stroke", () => {
-                return labelFont.lineColor ? labelFont.lineColor : "#000";
-            })
-            .style("stroke-width", () => {
-                return labelFont.lineWeight ? labelFont.lineWeight : 0;
+        d3.selectAll(".value-text")
+            .style("opacity", function(d) {
+                const width = d3
+                    .select(this)
+                    .node()
+                    .getBBox().width;
+                d.hideLabel = width * 1.05 > d.r * 2;
+                // return d.hideLabel ? 0 : 1;
+                // if(d.hideLabel){
+                //     return d.data.label.substring(0,2)
+                // }
+                // return d.label
+                return d.data.label.substring(0, 2);
             })
             .text(function(d) {
-                return d.label;
-            });
-
-        // Center the texts inside the circles.
-        d3.selectAll(".label-text")
-            .attr("x", function(d) {
-                const self = d3.select(this);
-                const width = self.node().getBBox().width;
-                return -(width / 2);
-            })
-            .style("opacity", function(d) {
-                const self = d3.select(this);
-                const width = self.node().getBBox().width;
+                const width = d3
+                    .select(this)
+                    .node()
+                    .getBBox().width;
                 d.hideLabel = width * 1.05 > d.r * 2;
-                return d.hideLabel ? 0 : 1;
+                // return d.hideLabel ? 0 : 1;
+                if (d.hideLabel) {
+                    return d.data.label.trim().substring(0, d.r / 4) + ".";
+                }
+                return d.label;
+                // return d.data.label.substring(0,2)
             })
-            .attr("y", function(d) {
-                return labelFont.size / 2;
-            });
-
-        // Center the texts inside the circles.
-        d3.selectAll(".value-text")
             .attr("x", function(d) {
                 const self = d3.select(this);
                 const width = self.node().getBBox().width;
                 return -(width / 2);
             })
             .attr("y", function(d) {
-                if (d.hideLabel) {
-                    return valueFont.size / 3;
-                } else {
-                    return -valueFont.size * 0.5;
-                }
+                // if (d.hideLabel) {
+                //     return valueFont.size / 3;
+                // } else {
+                //     return -valueFont.size * 0.5;
+                // }
+                return valueFont.size / 3;
             });
+        // node.append("text")
+        //     .attr("class", "label-text")
+        //     .style("font-size", `${labelFont.size}px`)
+        //     .attr("clip-path", function(d) {
+        //         return "url(#clip-" + d.id + ")";
+        //     })
+        //     .style("font-weight", d => {
+        //         return labelFont.weight ? labelFont.weight : 600;
+        //     })
+        //     .style("font-family", labelFont.family)
+        //     .style("fill", () => {
+        //         return labelFont.color ? labelFont.color : "#000";
+        //     })
+        //     .style("stroke", () => {
+        //         return labelFont.lineColor ? labelFont.lineColor : "#000";
+        //     })
+        //     .style("stroke-width", () => {
+        //         return labelFont.lineWeight ? labelFont.lineWeight : 0;
+        //     })
+        //     .text(function(d) {
+        //         // return d.label;
+        //         return d.value
+        //     });
 
-        node.append("title").text(function(d) {
-            return d.label;
-        });
+        // Center the texts inside the circles.
+        // d3.selectAll(".label-text")
+        //     .attr("x", function(d) {
+        //         const self = d3.select(this);
+        //         const width = self.node().getBBox().width;
+        //         return -(width / 2);
+        //     })
+        //     .style("opacity", function(d) {
+        //         const self = d3.select(this);
+        //         const width = self.node().getBBox().width;
+        //         d.hideLabel = width * 1.05 > d.r * 2;
+        //         return d.hideLabel ? 0 : 1;
+        //     })
+        //     .attr("y", function(d) {
+        //         return labelFont.size / 2;
+        //     });
+
+        // Center the texts inside the circles.
     }
 
     renderLegend(width, height, offset, nodes, color) {

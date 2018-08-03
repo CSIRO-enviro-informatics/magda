@@ -10,6 +10,7 @@ gcloud container clusters get-credentials kn-dev-cluster-1 --zone australia-sout
 
 kubectl config set-context $(kubectl config current-context) --namespace=$NAMESPACE
 
+chmod 755 *.sh
 echo ""
 echo ""
 echo "Initializing Helm"

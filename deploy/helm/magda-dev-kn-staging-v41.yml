@@ -28,7 +28,7 @@ gateway:
     tag: "latest"
   auth:
     facebookClientId: ""
-    googleClientId: "667942079301-49aomsf5l1i8tc5amdot6ck96e1d84c6.apps.googleusercontent.com"
+    googleClientId: "1049152486192-egoid2mcksouu0cofe326hdb2asuvrc9.apps.googleusercontent.com"
     aafClientUri: "https://rapid.test.aaf.edu.au/jwt/authnrequest/research/7xVQiC5TJXrzzkljNmFeeg"
   resources:
     requests:
