@@ -93,7 +93,7 @@ export default class PublisherViews extends Component {
                     formats: {
                         terms: {
                             field: "keywords.raw",
-                            size: 100
+                            size: 50
                         }
                     }
                 }
@@ -110,7 +110,7 @@ export default class PublisherViews extends Component {
                     formats: {
                         terms: {
                             field: "keywords.raw",
-                            size: 100
+                            size: 50
                         }
                     }
                 }
