@@ -8,7 +8,7 @@ global:
     maxUnavailable: 1
   image:
     pullPolicy: Always
-    tag: "0.0.41-0"
+    tag: "0.0.41"
 tags:
     all: false
     authorization-api: true
