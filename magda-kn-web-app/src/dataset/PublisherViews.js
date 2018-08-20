@@ -197,7 +197,7 @@ export default class PublisherViews extends Component {
                         <img className="small-img" src={value.aspects['organization-details'].imageUrl ? value.aspects['organization-details'].imageUrl: '/img/emptyImg.png' } alt="logo" />
                     </div> */}
                         <div className="media-body">
-                            <Link to={"/organisation/" + value.id}>
+                            <Link to={"/publisher/" + value.id}>
                                 <h3 className="media-heading org-name">
                                     {value.name}
                                 </h3>
@@ -210,14 +210,14 @@ export default class PublisherViews extends Component {
                             </p>
                             <ButtonToolbar>
                                 <Link
-                                    to={"/dataset/" + value.id}
+                                    to={"/publisher/dataset/" + value.id}
                                     className="btn alert-info pull-right"
                                 >
                                     View Dataset
                                 </Link>{" "}
                                 &nbsp; &nbsp;
                                 <Link
-                                    to={"/organisation/" + value.id}
+                                    to={"/publisher/" + value.id}
                                     className="btn alert-info pull-right"
                                 >
                                     About
@@ -245,14 +245,14 @@ export default class PublisherViews extends Component {
                                 {/* <p className="card-text">{value.aspects['organization-details'].description}</p> */}
                                 <ButtonToolbar>
                                     <Link
-                                        to={"/dataset/" + value.id}
+                                        to={"/publisher/dataset/" + value.id}
                                         className="btn alert-info pull-right"
                                     >
                                         View Dataset
                                     </Link>{" "}
                                     &nbsp; &nbsp;
                                     <Link
-                                        to={"/organisation/" + value.id}
+                                        to={"/publisher/" + value.id}
                                         className="btn alert-info pull-right"
                                     >
                                         About
