@@ -72,8 +72,8 @@ export default class NavBar extends Component {
                             <LinkContainer to="/datasource">
                                 <MenuItem>Data Source</MenuItem>
                             </LinkContainer>
-                            <LinkContainer to="/organisation">
-                                <MenuItem>Organisation</MenuItem>
+                            <LinkContainer to="/publisher">
+                                <MenuItem>Publisher</MenuItem>
                             </LinkContainer>
                         </NavDropdown>
                         {this.state.user === "" ? (

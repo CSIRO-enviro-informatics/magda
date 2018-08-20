@@ -6,7 +6,7 @@ import API from "../config";
 import BubbleChart from "./BubbleChart";
 import "./DataSet.css";
 
-export default class AboutOrganization extends Component {
+export default class AboutPublisher extends Component {
     constructor(props) {
         super(props);
         this.state = { pub_id: "", name: "", datasetNum: 0, keywords: [] };
@@ -137,7 +137,7 @@ export default class AboutOrganization extends Component {
                                 dataset:{" "}
                                 <Link
                                     to={{
-                                        pathname: `/dataset/${
+                                        pathname: `/publisher/dataset/${
                                             this.state.pub_id
                                         }`,
                                         params: { org_name: this.state.name }

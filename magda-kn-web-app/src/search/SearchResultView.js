@@ -8,10 +8,6 @@ export default class SearchResultView extends Component {
             return (
                 <div>
                     {this.props.result.dataSets.map((item, key) => {
-                        // console.log(item.publisher)
-                        var publisher_identifier = item.publisher
-                            ? encodeURIComponent(item.publisher.identifier)
-                            : encodeURIComponent(item.identifier);
                         return (
                             <div className="search-res-item" key={key}>
                                 <h3>
@@ -20,8 +16,6 @@ export default class SearchResultView extends Component {
                                     <Link
                                         to={
                                             "/dataset/" +
-                                            publisher_identifier +
-                                            "/" +
                                             encodeURIComponent(item.identifier)
                                         }
                                     >
