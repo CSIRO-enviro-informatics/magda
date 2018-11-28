@@ -1,6 +1,6 @@
 {
     "type": "magda-csw-connector",
-    "id": "TERN",
+    "id": "tern",
     "name": "Terrestrial Ecosystem Research Network",
     "sourceUrl": "https://geonetwork.tern.org.au/geonetwork/srv/eng/csw",
     "pageSize": 100,
