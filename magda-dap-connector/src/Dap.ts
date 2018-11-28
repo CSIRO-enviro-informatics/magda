@@ -414,17 +414,6 @@ export default class Dap implements ConnectorSource {
                                                                 )
                                                             );
                                                         }
-                                                        // if(detail.file.length > this.distributionSize){
-                                                        //     let distributionObj:any = {}
-                                                        //     distributionObj['accessURL'] = detail['self']
-                                                        //     distributionObj['downloadURL'] = detail['self']
-                                                        //     distributionObj['id'] = detail['id']
-                                                        //     distributionObj['mediaType'] = returnDistribution[0].mediaType
-                                                        //     distributionObj['format'] = returnDistribution[0].format
-                                                        //     distributionObj['name'] = '... More distribution data from orginal source'
-                                                        //     returnDistribution.push(distributionObj)
-                                                        // }
-                                                        // resolve3(returnDistribution);
                                                         resolve3({
                                                             identifier:
                                                                 simpleData.id
@@ -485,53 +474,4 @@ export default class Dap implements ConnectorSource {
         // console.log(dataset.summarizedDistribution)
         return Promise.resolve(dataset.summarizedDistribution);
     }
-    // getDistributions(dataset:any){
-    //     if(dataset.data){
-    //         return new Promise<any>((resolve3, reject3) => {
-    //             request(dataset.data, { json: true }, (error, response, detail) => {
-    //                 console.log('>> request distribution of '+dataset.data)
-    //                 if (error) {
-    //                     reject3(error);
-    //                     return;
-    //                 }
-    //                 let distributionMap:Map<String, object []> = new Map()
-    //                 for(let file of detail.file){
-    //                     let mediaType = file['link']['mediaType']
-    //                     let distributionObj:any = {}
-    //                     distributionObj['licence'] = detail['licence']
-    //                     distributionObj['accessURL'] = detail['self']
-    //                     distributionObj['downloadURL'] = file['link']['href']
-    //                     distributionObj['id'] =file['id']
-    //                     distributionObj['mediaType'] = mediaType
-    //                     distributionObj['format'] = mediaType
-    //                     distributionObj['name'] = file['filename']
-    //                     let temp = distributionMap.get(mediaType) || []
-    //                     temp.push(distributionObj)
-    //                     distributionMap.set(mediaType, temp)
-    //                 }
-    //                 let avgDistSize = Math.ceil(this.distributionSize/distributionMap.size)
-    //                 let returnDistribution:any = []
-    //                 for(let [_, dist] of distributionMap){
-    //                     returnDistribution = returnDistribution.concat(dist.slice(0, avgDistSize))
-    //                 }
-    //                 // console.log(returnDistribution.length, avgDistSize, returnDistribution)
-    //                 if(detail.file.length > this.distributionSize){
-    //                     let distributionObj:any = {}
-    //                     distributionObj['accessURL'] = detail['self']
-    //                     distributionObj['downloadURL'] = detail['self']
-    //                     distributionObj['id'] = detail['id']
-    //                     distributionObj['mediaType'] = returnDistribution[0].mediaType
-    //                     distributionObj['format'] = returnDistribution[0].format
-    //                     distributionObj['name'] = '... More distribution data from orginal source'
-    //                     returnDistribution.push(distributionObj)
-    //                 }
-    //                 resolve3(returnDistribution);
-    //             });
-    //         })
-    //     }else {
-    //         return new Promise<any>((resolve, reject) =>{
-    //             resolve([])
-    //         })
-    //     }
-    // }
 }
