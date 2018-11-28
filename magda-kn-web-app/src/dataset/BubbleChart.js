@@ -81,7 +81,7 @@ export default class BubbleChart extends Component {
 
     renderBubbles(width, nodes, color) {
         const { graph, data, onclick, valueFont, labelFont } = this.props;
-        console.log(this);
+        // console.log(this);
         const bubbleChart = d3
             .select(this.svg)
             .append("g")

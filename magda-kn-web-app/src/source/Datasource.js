@@ -9,14 +9,15 @@ export default class Datasource extends Component {
     constructor(props) {
         super(props);
         this.state = { datasource: new Map() };
+        this.allRecords = [];
     }
     componentDidMount() {
-        if (this.state.datasource.size === 0) this.getDataSource();
+        if (this.state.datasource.size === 0) this.getDataSource(0);
     }
 
-    getDataSource() {
+    getDataSource(pageToken) {
         // console.log('load data ... ')
-        fetch(API.dataSource)
+        fetch(API.dataSource + "&pageToken=" + pageToken)
             .then(response => {
                 // console.log(response)
                 if (response.status === 200) {
@@ -24,7 +25,12 @@ export default class Datasource extends Component {
                 } else console.log("Get data error ");
             })
             .then(json => {
-                this.organizeDataSource(json);
+                if (json.nextPageToken) {
+                    this.allRecords = this.allRecords.concat(json.records);
+                    this.getDataSource(json.nextPageToken);
+                } else {
+                    this.organizeDataSource(this.allRecords);
+                }
             })
             .catch(error => {
                 console.log("error on .catch", error);
@@ -35,7 +41,7 @@ export default class Datasource extends Component {
         //Source map id as key, souce object as value
         let sourceMap = new Map();
         let sourcePublisherMap = new Map();
-        data.records.map(record => {
+        data.map(record => {
             if (!sourceMap.has(record.aspects.source.id))
                 sourceMap.set(record.aspects.source.id, record.aspects.source);
             let publisherArray =

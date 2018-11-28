@@ -131,7 +131,7 @@ export default class DataSetListForOrg extends Component {
         })
             .then(res => res.json())
             .then(json => {
-                console.log(json);
+                // console.log(json);
                 let keywords = json.aggregations.keywords_agg.buckets.map(
                     keys => {
                         return { label: keys.key, value: keys.doc_count };

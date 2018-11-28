@@ -100,11 +100,6 @@ export default class AboutPublisher extends Component {
     }
 
     render() {
-        let data = [
-            { _id: 1, value: 5, sentiment: "#000", selected: "true" },
-            { _id: 1, value: 5, sentiment: "#000", selected: "true" },
-            { _id: 1, value: 5, sentiment: "#000", selected: "true" }
-        ];
         return (
             <Grid bsClass="padding-top">
                 <Row>

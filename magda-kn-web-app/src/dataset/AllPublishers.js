@@ -10,22 +10,29 @@ export default class AllPublishers extends Component {
         super(props);
         this.state = { datasetInfo: [], totalCount: 0, viewType: "line" };
         //view type: line, grid
+        this.allRecords = [];
     }
 
     componentDidMount() {
-        this.getData();
+        this.getDataSource(0);
     }
-    getData() {
-        fetch(API.dataSetOrg)
+
+    getDataSource(pageToken) {
+        // console.log('load data ... ')
+        fetch(API.dataSetOrg + "&pageToken=" + pageToken)
             .then(response => {
+                // console.log(response)
                 if (response.status === 200) {
                     return response.json();
                 } else console.log("Get data error ");
             })
             .then(json => {
-                // console.log(json)
-                // this.setState({datasetInfo: json.records, totalCount: json.totalCount})
-                this.organizeDataSource(json);
+                if (json.nextPageToken) {
+                    this.allRecords = this.allRecords.concat(json.records);
+                    this.getDataSource(json.nextPageToken);
+                } else {
+                    this.organizeDataSource(this.allRecords);
+                }
             })
             .catch(error => {
                 console.log("error on .catch", error);
@@ -36,7 +43,7 @@ export default class AllPublishers extends Component {
         //Source map id as key, souce object as value
         let sourceMap = new Map();
         let sourcePublisherMap = new Map();
-        data.records.map(record => {
+        data.map(record => {
             if (!sourceMap.has(record.aspects.source.id))
                 sourceMap.set(record.aspects.source.id, record.aspects.source);
             let publisherArray =

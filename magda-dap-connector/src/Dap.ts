@@ -30,8 +30,8 @@ export interface DapPackageSearchResult {
     results: DapDataset[];
     [propName: string]: any;
 }
-export interface DapDistribution{
-    distributions: object[]
+export interface DapDistribution {
+    distributions: object[];
 }
 
 export interface DapOrganizationListResponse {
@@ -88,42 +88,51 @@ export default class Dap implements ConnectorSource {
     }
 
     private organization = {
-        name: 'The Commonwealth Scientific and Industrial Research Organisation',
-        identifier: 'CSIRO',
-        title: 'The Commonwealth Scientific and Industrial Research Organisation',
+        name:
+            "The Commonwealth Scientific and Industrial Research Organisation",
+        identifier: "CSIRO",
+        title:
+            "The Commonwealth Scientific and Industrial Research Organisation",
         description: `The Commonwealth Scientific and Industrial Research Organisation (CSIRO) is Australia's national science agency and one of the largest and most diverse research agencies in the world. The CSIRO Data Access Portal provides access to research data, software and other digital assets published by CSIRO across a range of disciplines. The portal is maintained by CSIRO Information Management & Technology to facilitate sharing and reuse.`,
-        imageUrl: 'https://data.csiro.au/dap/resources-2.6.6/images/csiro_logo.png'
-    }
+        imageUrl:
+            "https://data.csiro.au/dap/resources-2.6.6/images/csiro_logo.png"
+    };
 
-     public getJsonDatasets(): AsyncPage<any[]> {
+    public getJsonDatasets(): AsyncPage<any[]> {
         const packagePages = this.packageSearch({
-            ignoreHarvestSources: this.ignoreHarvestSources,
+            ignoreHarvestSources: this.ignoreHarvestSources
         });
         return packagePages.map(packagePage => {
-            if(packagePage){
+            if (packagePage) {
                 // return packagePage.dataCollections
-                return packagePage.detailDataCollections
+                return packagePage.detailDataCollections;
             }
-        })
+        });
     }
 
     public getJsonDataset(id: string): Promise<any> {
         const url = this.urlBuilder.getPackageShowUrl(id);
         return new Promise<any>((resolve, reject) => {
-            request(url, { json: true }, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                    return;
+            request(
+                url,
+                { json: true, timeout: 300000, pool: { maxSockets: 1000 } },
+                (error, response, body) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    resolve(body);
                 }
-                resolve(body);
-            });
+            );
         });
     }
     public getJsonDistributions(dataset: any): AsyncPage<object[]> {
-        // dataset of dataCollection from DAP /collections api does not contain a 'data' field, which defines the dirstributions 
+        // dataset of dataCollection from DAP /collections api does not contain a 'data' field, which defines the dirstributions
         // Herr use an api call (/collections/id) to get the dataset with the field 'data', and then fetch
         // return AsyncPage.single<object[]>(dataset.summarizedDistribution || [])
-        return AsyncPage.singlePromise<DapDistribution[]>(this.getDistributions(dataset))
+        return AsyncPage.singlePromise<DapDistribution[]>(
+            this.getDistributions(dataset)
+        );
         // return AsyncPage.singlePromise<DapDistribution[]>(this.requestDistributions(dataset.data))
     }
 
@@ -171,15 +180,18 @@ export default class Dap implements ConnectorSource {
         let startIndex = startStart;
 
         return AsyncPage.create<DapPackageSearchResponse>(previous => {
-            if (previous ) {
-                if (startIndex*previous.resultsPerPage >= previous.totalResults) {
+            if (previous) {
+                if (
+                    startIndex * previous.resultsPerPage >=
+                    previous.totalResults
+                ) {
                     return undefined;
-                }else{
+                } else {
                     startIndex = startIndex + 1;
                 }
             }
             const remaining = options.rpp
-                ? startIndex*options.rpp - previous.totalResults
+                ? startIndex * options.rpp - previous.totalResults
                 : undefined;
             return this.requestPackageSearchPage(
                 url,
@@ -189,11 +201,8 @@ export default class Dap implements ConnectorSource {
             );
         });
     }
-    
-    searchDatasetsByTitle(
-        title: string,
-        maxResults: number
-    ): AsyncPage<any[]> {
+
+    searchDatasetsByTitle(title: string, maxResults: number): AsyncPage<any[]> {
         return AsyncPage.single([this.organization]);
     }
 
@@ -202,7 +211,7 @@ export default class Dap implements ConnectorSource {
     }
 
     getJsonFirstClassOrganization(id: string): Promise<any> {
-        return Promise.resolve(this.organization)
+        return Promise.resolve(this.organization);
     }
 
     searchFirstClassOrganizationsByTitle(
@@ -211,12 +220,12 @@ export default class Dap implements ConnectorSource {
     ): AsyncPage<any[]> {
         return AsyncPage.single([this.organization]);
     }
-   
+
     public getJsonDatasetPublisherId(dataset: any): string {
-        return 'CSIRO'
+        return "CSIRO";
     }
     getJsonDatasetPublisher(dataset: any): Promise<any> {
-        return Promise.resolve(this.organization)
+        return Promise.resolve(this.organization);
     }
 
     private requestPackageSearchPage(
@@ -238,95 +247,215 @@ export default class Dap implements ConnectorSource {
             new Promise<DapPackageSearchResponse>((resolve, reject) => {
                 const requestUrl = pageUrl.toString() + fqComponent;
                 // console.log("Requesting " + requestUrl);
-                request(requestUrl, { json: true }, async (error, response, body) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                    console.log("Received@" + startIndex);
-                    if(response.statusCode !== 200 || body.dataCollections === undefined){
-                        reject("Response with code=" + response.statusCode + ", data retrieve will exist at page "+ startIndex);
-                        return;
-                    }
-                    await Promise.all(body.dataCollections.map((simpleData:any) =>{
-                        const url = this.urlBuilder.getPackageShowUrl(simpleData.id.identifier); 
-                        return new Promise<any>((resolve2, reject2) => {
-                            request(url, { json: true }, (error, response, detail) => {
-                                console.log('>> request detail of '+url)
-                                if (error) {
-                                    reject2(error);
-                                    return;
+                request(
+                    requestUrl,
+                    { json: true, timeout: 300000, pool: { maxSockets: 1000 } },
+                    async (error, response, body) => {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
+                        console.log("Received@" + startIndex);
+                        if (
+                            response.statusCode !== 200 ||
+                            body.dataCollections === undefined
+                        ) {
+                            reject(
+                                "Response with code=" +
+                                    response.statusCode +
+                                    ", data retrieve will exist at page " +
+                                    startIndex
+                            );
+                            return;
+                        }
+                        await Promise.all(
+                            body.dataCollections.map((simpleData: any) => {
+                                const url = this.urlBuilder.getPackageShowUrl(
+                                    simpleData.id.identifier
+                                );
+                                return new Promise<any>((resolve2, reject2) => {
+                                    request(
+                                        url,
+                                        {
+                                            json: true,
+                                            timeout: 300000,
+                                            pool: { maxSockets: 1000 }
+                                        },
+                                        (error, response, detail) => {
+                                            console.log(
+                                                ">> request detail of " + url
+                                            );
+                                            if (error) {
+                                                reject2(error);
+                                                return;
+                                            }
+                                            resolve2(detail);
+                                        }
+                                    );
+                                });
+                            })
+                        )
+                            .then(values => {
+                                body["detailDataCollections"] = values;
+                            })
+                            .catch(error => console.log(error));
+
+                        await Promise.all(
+                            body.detailDataCollections.map(
+                                (simpleData: any) => {
+                                    // const url = this.urlBuilder.getPackageShowUrl(simpleData.id.identifier);
+                                    if (simpleData.data) {
+                                        return new Promise<any>(
+                                            (resolve3, reject3) => {
+                                                request(
+                                                    simpleData.data,
+                                                    {
+                                                        json: true,
+                                                        timeout: 300000,
+                                                        pool: {
+                                                            maxSockets: 1000
+                                                        }
+                                                    },
+                                                    (
+                                                        error,
+                                                        response,
+                                                        detail
+                                                    ) => {
+                                                        console.log(
+                                                            ">> request distribution of " +
+                                                                simpleData.data,
+                                                            detail
+                                                        );
+                                                        if (error) {
+                                                            reject3(error);
+                                                            return;
+                                                        }
+                                                        let distributionMap: Map<
+                                                            String,
+                                                            object[]
+                                                        > = new Map();
+                                                        if (
+                                                            response.statusCode ==
+                                                            200
+                                                        ) {
+                                                            for (let file of detail.file) {
+                                                                let mediaType =
+                                                                    file[
+                                                                        "link"
+                                                                    ][
+                                                                        "mediaType"
+                                                                    ];
+                                                                let distributionObj: any = {};
+                                                                distributionObj[
+                                                                    "licence"
+                                                                ] =
+                                                                    detail[
+                                                                        "licence"
+                                                                    ];
+                                                                distributionObj[
+                                                                    "accessURL"
+                                                                ] =
+                                                                    detail[
+                                                                        "self"
+                                                                    ];
+                                                                distributionObj[
+                                                                    "downloadURL"
+                                                                ] =
+                                                                    file[
+                                                                        "link"
+                                                                    ]["href"];
+                                                                distributionObj[
+                                                                    "id"
+                                                                ] =
+                                                                    file["id"];
+                                                                distributionObj[
+                                                                    "mediaType"
+                                                                ] = mediaType;
+                                                                distributionObj[
+                                                                    "format"
+                                                                ] = mediaType;
+                                                                distributionObj[
+                                                                    "name"
+                                                                ] =
+                                                                    file[
+                                                                        "filename"
+                                                                    ];
+                                                                let temp =
+                                                                    distributionMap.get(
+                                                                        mediaType
+                                                                    ) || [];
+                                                                temp.push(
+                                                                    distributionObj
+                                                                );
+                                                                distributionMap.set(
+                                                                    mediaType,
+                                                                    temp
+                                                                );
+                                                            }
+                                                        }
+
+                                                        // let avgDistSize = Math.ceil(this.distributionSize/distributionMap.size)
+                                                        let returnDistribution: any = [];
+                                                        for (let [
+                                                            _,
+                                                            dist
+                                                        ] of distributionMap) {
+                                                            returnDistribution = returnDistribution.concat(
+                                                                dist.slice(
+                                                                    0,
+                                                                    Math.ceil(
+                                                                        (dist.length *
+                                                                            this
+                                                                                .distributionSize) /
+                                                                            detail
+                                                                                .file
+                                                                                .length
+                                                                    )
+                                                                )
+                                                            );
+                                                        }
+                                                        resolve3({
+                                                            identifier:
+                                                                simpleData.id
+                                                                    .identifier,
+                                                            distributions: returnDistribution
+                                                        });
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    } else {
+                                        return new Promise<any>(
+                                            (resolve, reject) => {
+                                                resolve({
+                                                    identifier:
+                                                        simpleData.id
+                                                            .identifier,
+                                                    distributions: []
+                                                });
+                                            }
+                                        );
+                                    }
                                 }
-                                resolve2(detail);
-                            });
-                        });
-                    })).then((values) => {
-                        body['detailDataCollections'] = values
-                    }).catch(error => console.log(error))
-                    
-                    await Promise.all(body.detailDataCollections.map((simpleData:any) =>{
-                        // const url = this.urlBuilder.getPackageShowUrl(simpleData.id.identifier); 
-                        if(simpleData.data){
-                        return new Promise<any>((resolve3, reject3) => {
-                            request(simpleData.data, { json: true }, (error, response, detail) => {
-                                console.log('>> request distribution of '+simpleData.data, detail.file.length)
-                                if (error) {
-                                    reject3(error);
-                                    return;
+                            )
+                        )
+                            .then(values => {
+                                body["distributions"] = values;
+                            })
+                            .catch(error => console.log(error));
+
+                        for (let dataset of body.detailDataCollections) {
+                            for (let dist of body.distributions) {
+                                if (dataset.id.identifier === dist.identifier) {
+                                    dataset["summarizedDistribution"] =
+                                        dist.distributions;
                                 }
-                                let distributionMap:Map<String, object []> = new Map()
-                                for(let file of detail.file){
-                                    let mediaType = file['link']['mediaType']
-                                    let distributionObj:any = {}
-                                    distributionObj['licence'] = detail['licence']
-                                    distributionObj['accessURL'] = detail['self']
-                                    distributionObj['downloadURL'] = file['link']['href']
-                                    distributionObj['id'] =file['id']
-                                    distributionObj['mediaType'] = mediaType
-                                    distributionObj['format'] = mediaType
-                                    distributionObj['name'] = file['filename']
-                                    let temp = distributionMap.get(mediaType) || []
-                                    temp.push(distributionObj)
-                                    distributionMap.set(mediaType, temp)
-                                }
-                                // let avgDistSize = Math.ceil(this.distributionSize/distributionMap.size)
-                                let returnDistribution:any = []
-                                for(let [_, dist] of distributionMap){
-                                    returnDistribution = returnDistribution.concat(dist.slice(0, Math.ceil(dist.length * this.distributionSize/detail.file.length)))
-                                }
-                                // if(detail.file.length > this.distributionSize){
-                                //     let distributionObj:any = {}
-                                //     distributionObj['accessURL'] = detail['self']
-                                //     distributionObj['downloadURL'] = detail['self']
-                                //     distributionObj['id'] = detail['id']
-                                //     distributionObj['mediaType'] = returnDistribution[0].mediaType
-                                //     distributionObj['format'] = returnDistribution[0].format
-                                //     distributionObj['name'] = '... More distribution data from orginal source'
-                                //     returnDistribution.push(distributionObj)
-                                // }
-                                // resolve3(returnDistribution);
-                                resolve3({identifier:simpleData.id.identifier, distributions: returnDistribution});
-                            });
-                        });
-                    }
-                    else{
-                        return new Promise<any>((resolve, reject) =>{
-                            resolve({identifier:simpleData.id.identifier, distributions:[]})
-                    })}
-                    })).then((values) => {
-                        body['distributions'] = values
-                    }).catch(error => console.log(error))
-                    
-                    for(let dataset of body.detailDataCollections){
-                        for(let dist of body.distributions){
-                            if(dataset.id.identifier === dist.identifier){
-                                dataset['summarizedDistribution'] = dist.distributions
                             }
                         }
+                        await resolve(body);
                     }
-                    await resolve(body)
-                })
-            })
+                );
+            });
         return retry(
             operation,
             this.secondsBetweenRetries,
@@ -341,57 +470,8 @@ export default class Dap implements ConnectorSource {
                 )
         );
     }
-    getDistributions(dataset:any){
+    getDistributions(dataset: any) {
         // console.log(dataset.summarizedDistribution)
-        return Promise.resolve(dataset.summarizedDistribution)
+        return Promise.resolve(dataset.summarizedDistribution);
     }
-    // getDistributions(dataset:any){
-    //     if(dataset.data){
-    //         return new Promise<any>((resolve3, reject3) => {
-    //             request(dataset.data, { json: true }, (error, response, detail) => {
-    //                 console.log('>> request distribution of '+dataset.data)
-    //                 if (error) {
-    //                     reject3(error);
-    //                     return;
-    //                 }
-    //                 let distributionMap:Map<String, object []> = new Map()
-    //                 for(let file of detail.file){
-    //                     let mediaType = file['link']['mediaType']
-    //                     let distributionObj:any = {}
-    //                     distributionObj['licence'] = detail['licence']
-    //                     distributionObj['accessURL'] = detail['self']
-    //                     distributionObj['downloadURL'] = file['link']['href']
-    //                     distributionObj['id'] =file['id']
-    //                     distributionObj['mediaType'] = mediaType
-    //                     distributionObj['format'] = mediaType
-    //                     distributionObj['name'] = file['filename']
-    //                     let temp = distributionMap.get(mediaType) || []
-    //                     temp.push(distributionObj)
-    //                     distributionMap.set(mediaType, temp)
-    //                 }
-    //                 let avgDistSize = Math.ceil(this.distributionSize/distributionMap.size)
-    //                 let returnDistribution:any = []
-    //                 for(let [_, dist] of distributionMap){
-    //                     returnDistribution = returnDistribution.concat(dist.slice(0, avgDistSize))
-    //                 }
-    //                 // console.log(returnDistribution.length, avgDistSize, returnDistribution)
-    //                 if(detail.file.length > this.distributionSize){
-    //                     let distributionObj:any = {}
-    //                     distributionObj['accessURL'] = detail['self']
-    //                     distributionObj['downloadURL'] = detail['self']
-    //                     distributionObj['id'] = detail['id']
-    //                     distributionObj['mediaType'] = returnDistribution[0].mediaType
-    //                     distributionObj['format'] = returnDistribution[0].format
-    //                     distributionObj['name'] = '... More distribution data from orginal source'
-    //                     returnDistribution.push(distributionObj)
-    //                 }
-    //                 resolve3(returnDistribution);
-    //             });
-    //         })
-    //     }else {
-    //         return new Promise<any>((resolve, reject) =>{
-    //             resolve([])
-    //         })
-    //     }
-    // }
 }
