@@ -2,12 +2,10 @@ import React from "react";
 import ReactDom from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import NavBar from "./NavBar";
 
 // Internet Explorer 6-11
 let isIE = /*@cc_on!@*/ false || !!document.documentMode;
-// Edge 20+
-let isEdge = !isIE && !!window.StyleMedia;
+
 if (!isIE) {
     ReactDom.render(
         <BrowserRouter>

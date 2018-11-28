@@ -83,7 +83,7 @@ export default class PublisherViews extends Component {
         }
     }
     getKeywords(datasource) {
-        console.log(datasource);
+        // console.log(datasource);
         this.setState({ currentDatasource: datasource });
         let query = "";
         if (datasource === "All Datasources") {
@@ -124,7 +124,7 @@ export default class PublisherViews extends Component {
         })
             .then(res => res.json())
             .then(json => {
-                console.log(json);
+                // console.log(json);
                 let keywords = json.aggregations.formats.buckets.map(keys => {
                     return { label: keys.key, value: keys.doc_count };
                 });
